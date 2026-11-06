@@ -32,7 +32,7 @@ from ui_forge import index as index_mod  # noqa: E402
 DATA_DIR = os.path.join(ROOT, "skill", "data")
 DATASET = os.path.join(DATA_DIR, "licenses.json")
 RAW = os.path.join(ROOT, ".tmp", "probe", "batch-results.json")
-UA = "ui-forge-license-probe/2.0 (+https://github.com/KaiyoDev/ui-forge)"
+UA = "ui-forge-license-probe/2.1 (+https://github.com/AivoraLab/ui-forge)"
 PAYWALL = {401, 402, 403}
 USABLE_TYPES = {"registry:ui", "registry:block", "registry:component", "registry:hook"}
 LOCK = threading.Lock()

@@ -8,7 +8,7 @@ import json
 import urllib.error
 import urllib.request
 
-USER_AGENT = "ui-forge/0.2 (+https://github.com/KaiyoDev/ui-forge)"
+USER_AGENT = "ui-forge/2.1 (+https://github.com/AivoraLab/ui-forge)"
 
 
 class FetchError(Exception):

@@ -20,7 +20,7 @@ reteach it, and it does not build an MCP — the official CLI/MCP owns transport
 
 ```bash
 npx skills add shadcn/ui
-npx skills add KaiyoDev/ui-forge
+npx skills add AivoraLab/ui-forge
 ```
 
 Then ask, in the repository you are working on:
