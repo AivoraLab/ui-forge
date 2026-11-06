@@ -63,12 +63,17 @@ hoặc lệch gu sẽ thua một registry ít tên tuổi hơn nhưng khớp tra
 ## Bắt đầu nhanh
 
 ```bash
-# 1. skill chính thức của shadcn: kiến thức CLI và convention dự án
-npx skills add shadcn/ui
-
-# 2. ui-forge: lớp ra quyết định
-npx skills add AivoraLab/ui-forge
+npx skills add AivoraLab/ui-forge -g -a '*' -y
 ```
+
+Một lệnh duy nhất, không hỏi gì: `skills` CLI cài ui-forge vào mọi agent nó phát
+hiện — Claude Code, Codex, Pi, Cursor, Gemini CLI — và vào thư mục dùng chung
+`~/.agents/skills` mà DSH harness đọc. Agent cũng có thể tự chạy lệnh này; `-y`
+bỏ qua mọi prompt.
+
+Skill chính thức của shadcn là **dependency, không phải điều kiện tiên quyết**:
+lần dùng đầu ui-forge tự cài nếu thiếu, và vẫn chạy được bằng `--no-cli` khi
+không có npm.
 
 Sau đó, trong repo bạn đang làm, hỏi agent:
 

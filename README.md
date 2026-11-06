@@ -64,12 +64,17 @@ wrong loses to a quieter one that matches the page.
 ## Quick start
 
 ```bash
-# 1. the official shadcn skill: CLI knowledge and project conventions
-npx skills add shadcn/ui
-
-# 2. ui-forge: the decision layer
-npx skills add AivoraLab/ui-forge
+npx skills add AivoraLab/ui-forge -g -a '*' -y
 ```
+
+One non-interactive command: the `skills` CLI installs ui-forge into every agent
+it detects — Claude Code, Codex, Pi, Cursor, Gemini CLI — and into the shared
+`~/.agents/skills` directory that the DSH harness reads. Agents can run this
+themselves; `-y` skips every prompt.
+
+The official shadcn skill is a **dependency, not a prerequisite**: on first use
+ui-forge installs it if it is missing, and keeps working through `--no-cli` when
+npm is unavailable.
 
 Then, in the repository you are working on, ask your agent:
 

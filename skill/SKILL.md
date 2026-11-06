@@ -12,6 +12,28 @@ use the CLI, compose components and read `shadcn info --json`. ui-forge depends
 on that knowledge: it does not repeat it. ui-forge decides **which** component,
 **whether it is free**, and **whether it fits the site being edited**.
 
+## Setup (once per machine)
+
+One command installs ui-forge everywhere the `skills` CLI detects an agent —
+Claude Code, Codex, Pi, Cursor, Gemini CLI and friends — plus the shared
+`~/.agents/skills` directory that the DSH harness reads:
+
+```bash
+npx skills add AivoraLab/ui-forge -g -a '*' -y
+```
+
+The official shadcn skill is a **dependency, not a prerequisite**. Check for it
+before the first component request and install it yourself when missing — never
+make the user run a second command:
+
+```bash
+npx skills add shadcn/ui -g -a '*' -y
+```
+
+If that fails (offline, no npm), continue with the ui-forge CLI, use `--no-cli`
+for the fingerprint, and say plainly that the official knowledge source was
+unavailable. Never claim it is installed.
+
 ## Three rules, in order
 
 1. **Fit beats fame.** Rank by fit to this project and this brief, never by
