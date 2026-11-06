@@ -103,9 +103,9 @@ trong code, không nằm trong metadata. Kết quả là `gate.compat_risk` dạ
 | Thiếu npm dependency | 0.5 mỗi cái, cap 2.0 |
 | registryDependencies 3–5 / >5 | 1.0 / 2.0 |
 | License unknown | 0.5 |
-| Paywall (HTTP 401/403) | 10.0, loại |
+| Paywall (HTTP 401/402/403) | 10.0, loại |
 
-401/403 là tín hiệu license, không phải lỗi để retry. Tối đa 3 ứng viên sống
+401/402/403 là tín hiệu license, không phải lỗi để retry. Tối đa 3 ứng viên sống
 sót đi tiếp.
 
 ### 3.6 Fitting Room
@@ -154,13 +154,29 @@ không nói rõ.
 `status` (`free` / `freemium` / `paid` / `unknown`), `checked_at`, và
 `evidence[]` gồm item, URL, HTTP status thật.
 
+Tính đến 2026-11-06, dataset phủ **486/539 registry**: 462 `free`, 16
+`freemium`, 6 `paid`, 2 `unknown`. 53 registry còn lại có index chết hoặc
+timeout nên chưa có bằng chứng — chúng vẫn hiện dạng `unknown` bị gắn cờ, không
+bị coi là free.
+
 - `free`: các item mẫu trả 200.
-- `freemium`: có item 200, có item 401 (ví dụ @tailark, @aceternity).
-- `paid`: toàn bộ item mẫu 401 (ví dụ @shadcnblocks).
-- `unknown`: chưa ai kiểm chứng — cấm đoán.
+- `freemium`: có item 200, có item 401/402/403 (ví dụ @tailark, @aceternity).
+- `paid`: toàn bộ item mẫu 401/402/403 (ví dụ @shadcnblocks, @mozaika).
+- `unknown`: chưa kiểm chứng được — cấm đoán.
+
+**HTTP 402 Payment Required cũng là paywall**, không chỉ 401/403; `@mozaika` là
+ca thật phát hiện khi quét.
 
 Đóng góp chính cho cộng đồng là thêm một dòng có bằng chứng vào file này
-(xem `CONTRIBUTING.md`).
+(xem `CONTRIBUTING.md`). Muốn quét lại hàng loạt:
+
+```bash
+python3 tools/probe_licenses.py --only-missing --include-degraded
+python3 tests/check_licenses.py
+```
+
+Tool không ghi đè entry đã có và CI không gọi mạng — bằng chứng do người chạy
+probe chịu trách nhiệm.
 
 ## 5. Cấu trúc repo
 
@@ -183,7 +199,10 @@ skill/
         ├── evaluate.py      xếp hạng theo profile
         ├── render.py        chụp ảnh + verdict store
         └── net.py           HTTP policy, không lỗi im lặng
+tools/probe_licenses.py      quét license hàng loạt (maintainer, không chạy CI)
 tests/smoke.py               test offline, chạy trên CI (Python 3.12 & 3.14)
+tests/check_licenses.py      validate dataset license (offline)
+tests/check_skill.py         validate frontmatter + surface lệnh
 ```
 
 ## 6. Giới hạn đã biết

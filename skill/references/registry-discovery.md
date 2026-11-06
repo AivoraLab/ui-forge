@@ -39,6 +39,9 @@ Verified live on 2026-11-06 against `https://ui.shadcn.com/r/registries.json`
   left untouched.
 - Registry health is a tiebreaker, never the ranking: a healthy registry can
   still be paid, incompatible or ugly.
+- License evidence is refreshed by `tools/probe_licenses.py` from a repository
+  checkout (`--only-missing --include-degraded`), never while answering a
+  component request and never in CI. Existing entries are not overwritten.
 
 ## Limits
 

@@ -56,7 +56,9 @@ so the agent never retypes a risk score.
 All state lives in `skill/data/`:
 
 - `licenses.json` — committed evidence: status, checked date, URLs and HTTP
-  codes. Community-contributed; unknown stays unknown.
+  statuses (486 of 539 registries probed: 462 free, 16 freemium, 6 paid, 2
+  unknown). Refreshed by `tools/probe_licenses.py`, never by CI. Unknown stays
+  unknown.
 - `registries-cache.json` — official index, 24 h TTL, stale-if-error.
 - `fingerprint-cache.json` — project fingerprint, keyed by mtime signature.
 - `verdicts/` — the user's choices per project path and item hash.
@@ -73,6 +75,6 @@ records (see RFC question 3 in concept.md).
 - Scripts make network requests only to endpoints discovered from the official
   index, named by the user, or reached through `shadcn` itself. Nothing phones
   home.
-- A paywall (401/403) is recorded as evidence and never retried.
+- A paywall (401/402/403) is recorded as evidence and never retried.
 - No credentials are needed for public registries. Private registries go
   through the shadcn CLI's own auth config, never through ui-forge.

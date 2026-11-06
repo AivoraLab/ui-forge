@@ -1,5 +1,5 @@
 name: ui_forge
 title: ui-forge - AI UI Component Intelligence for shadcn
-description: Discover shadcn registries live, search and inspect components for compatibility, render and score the top candidates visually, and install the one that best fits the design brief rather than the most famous one.
+description: Pick which shadcn component to use when 500+ registries mix free and paid. Ships a probed license dataset (free/freemium/paid with evidence), searches and gates components for compatibility (Radix/Base UI, Tailwind, tokens, dependencies, paywalls), and drafts up to three candidates so the user chooses the look. Fit beats fame.
 category: Creation
 include_in_prompt: false

@@ -54,8 +54,11 @@ must-have behaviour, and fit profile (`landing`, `saas`, `portfolio`, `admin`).
 $UIFORGE discover --json --limit 20
 ```
 
-Free-only by default. Registries with no license evidence stay but are flagged
-`license.flagged = true`; say so when you use them.
+Free-only by default. License truth comes from `data/licenses.json`: **486 of
+539 registries carry evidence** (462 free, 16 freemium, 6 paid, 2 unknown) as of
+2026-11-06. Paid and freemium registries are removed with the URL that proved
+the gate. Registries with no evidence stay but are flagged
+`license.flagged = true`; say so when you use them, and never call them free.
 
 ### 4. Search
 
@@ -126,6 +129,23 @@ $UIFORGE verdict "@magicui/hero-video-dialog" --sha256 <item.sha256> \
   --project . --chosen yes --note "user picked it for the hero on 2026-11-06"
 ```
 
+## License data
+
+`data/licenses.json` is probed evidence, not a directory opinion. Every entry
+records `checked_at` and the item URLs that returned 200 (public) or
+401/402/403 (paywall).
+
+- Read `license.flagged` before you recommend an item. An `unknown` registry is
+  not a free registry: state the uncertainty, do not silently upgrade it.
+- Treat evidence older than about 90 days as stale — quote the `checked_at`
+  date instead of presenting the status as current fact.
+- Do **not** re-probe while answering a component request. Batch probing is a
+  maintenance job, and it is slow and rate-limited.
+- Maintainers refresh from a repository checkout, never from an installed
+  skill: `python3 tools/probe_licenses.py --only-missing --include-degraded`,
+  then `python3 tests/check_licenses.py`. The tool never overwrites an existing
+  entry, and CI never calls the network.
+
 ## Scoring
 
 ```bash
@@ -147,3 +167,5 @@ of being retyped. Weights are fixed: do not "improve" them without an RFC.
 - Do not hardcode a registry list anywhere except `data/licenses.json`, which
   is community-contributed evidence, not configuration.
 - Never invent a license status or an evidence URL. Unknown stays unknown.
+- Do not run the batch license probe as part of a component request; it is a
+  maintainer task, not a step in the pipeline.

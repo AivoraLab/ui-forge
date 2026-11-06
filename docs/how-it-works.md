@@ -62,7 +62,7 @@ with one reason and evidence URL per point:
 - token collisions 1.5 each,
 - missing dependencies, registry dependency trees, unknown license.
 
-A paywall (HTTP 401/403) is a license signal: excluded, risk 10, never retried.
+A paywall (HTTP 401/402/403) is a license signal: excluded, risk 10, never retried.
 3 survivors at most move on.
 
 ## 6. Fitting Room
