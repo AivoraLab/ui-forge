@@ -1,0 +1,22 @@
+# runtime caches (data/licenses.json is source, not cache)
+skill/data/registries-cache.json
+skill/data/fingerprint-cache.json
+skill/data/verdicts/
+skill/data/previews/
+skill/data/*.tmp
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# local scratch (probes, legacy copies, renders)
+.tmp/
+.tmp-render/
+
+# node
+node_modules/
+
+# os
+.DS_Store
+Thumbs.db
