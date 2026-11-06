@@ -1,0 +1,5 @@
+name: ui_forge
+title: ui-forge - AI UI Component Intelligence for shadcn
+description: Discover shadcn registries live, search and inspect components for compatibility, render and score the top candidates visually, and install the one that best fits the design brief rather than the most famous one.
+category: Creation
+include_in_prompt: false
