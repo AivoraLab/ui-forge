@@ -23,6 +23,7 @@ SCRIPT = os.path.join(ROOT, "skill", "scripts", "uiforge.py")
 REGISTRY = os.path.join(ROOT, "tests", "fixtures", "registry")
 EXAMPLE = os.path.join(ROOT, "examples", "candidates-hero.json")
 PAYWALLED = "paywalled-item.json"
+PAYMENT_REQUIRED = "payment-required-item.json"
 
 
 class Handler(http.server.BaseHTTPRequestHandler):
@@ -43,6 +44,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
         name = self.path.split("?", 1)[0].rsplit("/", 1)[-1]
         if name == PAYWALLED:
             self._send(401)
+            return
+        if name == PAYMENT_REQUIRED:
+            self._send(402)
             return
         path = os.path.join(REGISTRY, name)
         if not os.path.exists(path):
@@ -191,6 +195,14 @@ class UiForgeSmoke(unittest.TestCase):
         self.assertEqual(doc["gate"]["compat_risk"], 10.0)
         self.assertEqual(doc["gate"]["verdict"], "fail")
         self.assertIn("401", doc["gate"]["exclude_reason"])
+
+    def test_inspect_payment_required_item_is_excluded(self):
+        doc = self.run_json("inspect", "@fixture/payment-required-item", "--json",
+                            "--project", self.project, "--no-cli")
+        self.assertTrue(doc["gate"]["excluded"])
+        self.assertEqual(doc["gate"]["compat_risk"], 10.0)
+        self.assertEqual(doc["gate"]["verdict"], "fail")
+        self.assertIn("402", doc["gate"]["exclude_reason"])
 
     def test_hero_ranking_is_reproduced(self):
         landing = self.run_json("evaluate", EXAMPLE, "--json", "--profile", "landing")

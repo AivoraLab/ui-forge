@@ -46,9 +46,11 @@ metadata-only fingerprint.
 
 ## Data
 
-`skill/data/licenses.json` is community-contributed evidence: registry status
-(`free` / `freemium` / `paid` / `unknown`), checked date and the URLs that
-proved it. Unknown stays unknown. See `CONTRIBUTING.md` to add a line.
+`skill/data/licenses.json` is probed evidence, not a directory claim. Coverage
+on 2026-11-06: **486 of 539 registries** (462 `free`, 16 `freemium`, 6 `paid`,
+2 `unknown`), each with item URLs and real HTTP statuses. Registries not in the
+dataset are treated as `unknown` and flagged. Refresh with
+`python3 tools/probe_licenses.py`; see `CONTRIBUTING.md` to add a single line.
 
 ## Status
 

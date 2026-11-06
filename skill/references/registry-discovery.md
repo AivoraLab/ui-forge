@@ -9,7 +9,9 @@ Verified live on 2026-11-06 against `https://ui.shadcn.com/r/registries.json`
   `{name}` URL template, description, health (score 0–100, status, 7d/30d
   availability) and `ranking.itemCount`.
 - The index carries **no license field**. Free/paid truth lives in
-  `data/licenses.json` (see `ui-forge discover --json`).
+  `data/licenses.json`: 486 of 539 registries probed on 2026-11-06 (462 free,
+  16 freemium, 6 paid, 2 unknown). Registries missing from the dataset are
+  treated as `unknown` and flagged, never as free.
 - `@shadcn` is not listed in the index: it is a built-in namespace served from
   `https://ui.shadcn.com/r/styles/{style}/{name}.json`.
 - 17 index templates contain `{style}`; most do not. Extensionless templates

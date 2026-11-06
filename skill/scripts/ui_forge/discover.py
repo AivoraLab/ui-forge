@@ -30,7 +30,7 @@ def discover(data_dir, limit=20, min_health=0.0, free_only=True, refresh=False,
         # silently disappearing because it is also degraded.
         if free_only and not kept_by_license:
             paywall = next(
-                (e for e in (license_info.get("evidence") or []) if e.get("http_status") in (401, 403)),
+                (e for e in (license_info.get("evidence") or []) if e.get("http_status") in (401, 402, 403)),
                 None,
             )
             if paywall:

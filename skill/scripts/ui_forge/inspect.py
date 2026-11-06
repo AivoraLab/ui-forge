@@ -260,7 +260,7 @@ def inspect(target, data_dir, project_dir=None, use_cli=True, recurse=True,
     try:
         item, used_url, failures = net.fetch_json_candidates(urls, timeout=timeout)
     except net.FetchError as exc:
-        if exc.code in ("http_401", "http_403"):
+        if exc.code in ("http_401", "http_402", "http_403"):
             license_info = dict(license_info)
             license_info["status"] = "paid" if license_info.get("status") == "unknown" else license_info["status"]
             return _paywall_gate(target, exc.url or (urls[0] if urls else None), exc.status, license_info)

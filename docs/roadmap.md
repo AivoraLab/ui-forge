@@ -18,7 +18,9 @@
 
 ## v2.1 — Coverage
 
-- [ ] Extend `licenses.json`: more registries probed, `freemium` scope details
+- [x] Extend `licenses.json`: 486/539 registries probed (462 free, 16 freemium,
+      6 paid, 2 unknown) via `tools/probe_licenses.py`
+- [ ] Record `freemium` scope details (which item families are gated)
 - [ ] Deepen `registryDependencies` recursion behind a flag (currently depth 1)
 - [ ] Pairwise scoring experiment (concept.md RFC question 1)
 

@@ -67,7 +67,7 @@ def fetch_json(url, timeout=30, headers=None):
 def fetch_json_candidates(urls, timeout=30, headers=None):
     """Try URLs in order. Only move on for 'not here' failures (404/415/bad JSON).
 
-    A 401/403 stops immediately: that is a paywall signal, not a wrong URL.
+    A 401/402/403 stops immediately: that is a paywall signal, not a wrong URL.
     Returns ``(data, url_used, failures)`` where failures lists
     ``{"url", "code", "message"}`` for the URLs that were skipped.
     """

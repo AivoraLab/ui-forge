@@ -77,7 +77,7 @@ checks Tailwind major, token collisions, registry dependencies and license
 evidence, and returns a numeric `gate.compat_risk` from 0 to 10 plus the reason
 and evidence for every point. Rules:
 
-- `gate.excluded` is true → drop it. Do not retry a 401/403: that is a paywall.
+- `gate.excluded` is true → drop it. Do not retry a 401/402/403: that is a paywall.
 - `compat_risk >= 6` → fail; `>= 3` → warn. Keep only 3 survivors at most.
 - Pass `--project` so the gate compares against the actual project. Use
   `--no-cli` only when Node/the shadcn CLI is unavailable.

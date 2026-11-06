@@ -13,7 +13,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATASET = os.path.join(ROOT, "skill", "data", "licenses.json")
 STATUSES = {"free", "freemium", "paid", "unknown"}
-PAYWALL = {401, 403}
+PAYWALL = {401, 402, 403}
 SCHEMA = "ui-forge/licenses/v1"
 
 
@@ -61,12 +61,12 @@ def entry_problems(entry, index):
             problems.append("%s: free has paywall evidence; use freemium instead" % where)
     elif status == "freemium":
         if 200 not in codes or not any(code in PAYWALL for code in codes):
-            problems.append("%s: freemium needs both 200 and 401/403 evidence" % where)
+            problems.append("%s: freemium needs both 200 and 401/402/403 evidence" % where)
     elif status == "paid":
         if not codes:
             problems.append("%s: paid needs evidence, not a guess" % where)
         elif any(code not in PAYWALL for code in codes):
-            problems.append("%s: paid must cite only 401/403 evidence; use freemium instead" % where)
+            problems.append("%s: paid must cite only 401/402/403 evidence; use freemium instead" % where)
     if status != "unknown":
         for key in ("scope", "method"):
             value = entry.get(key)

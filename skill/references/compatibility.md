@@ -17,7 +17,7 @@ obfuscation.
 | Missing npm deps | declared deps not installed and not provided by the item | 0.5 each, cap 2.0 |
 | Registry deps | 3–5 transitive items / more than 5 | 1.0 / 2.0 |
 | License unknown | status `unknown` in `data/licenses.json` | 0.5 |
-| License paywall | item URL answered 401/403 | 10.0, excluded |
+| License paywall | item URL answered 401/402/403 | 10.0, excluded |
 
 `gate.compat_risk` is the sum, capped at 10, one decimal. Verdict:
 `pass` < 3, `warn` ≥ 3, `fail` ≥ 6 or excluded. `gate.reasons[]` carries the
@@ -28,7 +28,7 @@ rounding them away.
 ## Order of operations
 
 1. Resolve the target. Project `components.json` registries are consulted
-   first; then the 539 index. 401/403 is a paywall: stop, record it, never
+   first; then the 539 index. 401/402/403 is a paywall: stop, record it, never
    retry.
 2. Fingerprint the project with `shadcn info --json` (fallback: components.json
    style, installed packages, CSS detection). Style prefix maps the base:
