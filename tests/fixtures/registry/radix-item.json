@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "radix-item",
+  "type": "registry:ui",
+  "title": "Radix Hero",
+  "description": "Hero fixture built on Radix primitives",
+  "dependencies": ["@radix-ui/react-slot"],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/hero-radix.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { Slot } from \"@radix-ui/react-slot\"\nimport { cn } from \"@/lib/utils\"\n\nexport function HeroRadix({ asChild }: { asChild?: boolean }) {\n  const Comp = asChild ? Slot : \"div\"\n  return <Comp className={cn(\"mx-auto max-w-3xl\")} />\n}\n"
+    }
+  ]
+}

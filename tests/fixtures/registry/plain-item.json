@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "plain-item",
+  "type": "registry:ui",
+  "title": "Plain Hero",
+  "description": "Hero fixture with motion only",
+  "dependencies": ["motion"],
+  "registryDependencies": [],
+  "cssVars": {
+    "light": {
+      "--hero-glow": "0 0 60px rgba(59,130,246,.35)"
+    }
+  },
+  "files": [
+    {
+      "path": "components/ui/hero-plain.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { motion } from \"motion/react\"\n\nexport function HeroPlain() {\n  return <motion.div className=\"mx-auto max-w-3xl\" />\n}\n"
+    }
+  ]
+}

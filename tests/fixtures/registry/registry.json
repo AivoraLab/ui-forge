@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "name": "radix-item",
+      "title": "Radix Hero",
+      "type": "registry:ui",
+      "description": "Hero fixture built on Radix primitives"
+    },
+    {
+      "name": "base-item",
+      "title": "Base Hero",
+      "type": "registry:ui",
+      "description": "Hero fixture built on Base UI primitives"
+    },
+    {
+      "name": "plain-item",
+      "title": "Plain Hero",
+      "type": "registry:ui",
+      "description": "Hero fixture with motion only"
+    },
+    {
+      "name": "radix-example",
+      "title": "Radix Hero Example",
+      "type": "registry:example",
+      "description": "demo-only hero fixture that search must filter out"
+    },
+    {
+      "name": "paywalled-item",
+      "title": "Paywalled Hero",
+      "type": "registry:ui",
+      "description": "item that answers HTTP 401"
+    }
+  ]
+}
