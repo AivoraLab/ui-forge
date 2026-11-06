@@ -146,7 +146,7 @@ class UiForgeSmoke(unittest.TestCase):
     def test_version(self):
         proc = self.run_cli("--version")
         self.assertEqual(proc.returncode, 0)
-        self.assertIn("ui-forge 2.0.0", proc.stdout)
+        self.assertIn("ui-forge 2.1.0", proc.stdout)
 
     def test_discover_is_free_first_and_flags_unknown(self):
         doc = self.run_json("discover", "--json", "--limit", "10")

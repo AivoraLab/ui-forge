@@ -16,7 +16,7 @@
 - [x] P5: README (two install commands + one prompt), CONTRIBUTING license path,
       docs on disk
 
-## v2.1 — Coverage
+## v2.1 — Coverage (shipped as 2.1.0)
 
 - [x] Extend `licenses.json`: 486/539 registries probed (462 free, 16 freemium,
       6 paid, 2 unknown) via `tools/probe_licenses.py`

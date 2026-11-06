@@ -54,7 +54,7 @@ dataset are treated as `unknown` and flagged. Refresh with
 
 ## Status
 
-v2.0.0, pre-release. The CLI, license dataset, gate and Fitting Room capture
+v2.1.0, pre-release. The CLI, license dataset, gate and Fitting Room capture
 are tested by `tests/smoke.py` (offline fixtures, CI on Python 3.12/3.14).
 Playwright is optional: `render` needs `npx playwright install chromium` and
 reports a clear error when it is missing.
