@@ -1,0 +1,32 @@
+[
+  {
+    "name": "@magicui/hero-video-dialog",
+    "visual": 9,
+    "fit": 7,
+    "motion": 8,
+    "a11y": 6,
+    "consistency": 7,
+    "health": 98.9,
+    "compat_risk": 0
+  },
+  {
+    "name": "@aceternity/hero-highlight",
+    "visual": 8,
+    "fit": 9,
+    "motion": 7,
+    "a11y": 7,
+    "consistency": 8,
+    "health": 76.6,
+    "compat_risk": 0
+  },
+  {
+    "name": "@bundui/hero-sections-01",
+    "visual": 7,
+    "fit": 8,
+    "motion": 5,
+    "a11y": 8,
+    "consistency": 8,
+    "health": 91.4,
+    "compat_risk": 0
+  }
+]

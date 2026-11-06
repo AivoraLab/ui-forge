@@ -1,0 +1,450 @@
+{
+  "schema": "ui-forge/licenses/v1",
+  "updated_at": "2026-11-06",
+  "method": "HTTP probe of item JSON built from the registry public URL template: 200 = publicly downloadable, 401/403 = paywall. First, middle and last item of each registry published registry.json index were sampled. Status is derived only from those codes; no marketing page is trusted.",
+  "statuses": {
+    "free": "every sampled item is publicly downloadable",
+    "freemium": "some sampled items are public, some answer 401/403",
+    "paid": "every sampled item answers 401/403",
+    "unknown": "no evidence yet; kept in --free-only results but flagged"
+  },
+  "entries": [
+    {
+      "registry": "@000h-cojeev",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 1876,
+      "evidence": [
+        {
+          "item": "cojeev",
+          "url": "https://000h.cojeev.com/r/cojeev.json",
+          "http_status": 200
+        },
+        {
+          "item": "icon-hamburger",
+          "url": "https://000h.cojeev.com/r/icon-hamburger.json",
+          "http_status": 200
+        },
+        {
+          "item": "icon-zoom-out",
+          "url": "https://000h.cojeev.com/r/icon-zoom-out.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@aceternity",
+      "status": "freemium",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 317,
+      "evidence": [
+        {
+          "item": "direction-aware-selection",
+          "url": "https://ui.aceternity.com/registry/direction-aware-selection.json",
+          "http_status": 401
+        },
+        {
+          "item": "grid",
+          "url": "https://ui.aceternity.com/registry/grid.json",
+          "http_status": 200
+        },
+        {
+          "item": "login-with-socials-and-email",
+          "url": "https://ui.aceternity.com/registry/login-with-socials-and-email.json",
+          "http_status": 401
+        }
+      ],
+      "note": "most components public; direction-aware-selection and login-with-socials-and-email answer HTTP 401"
+    },
+    {
+      "registry": "@animate-ui",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 789,
+      "evidence": [
+        {
+          "item": "backgrounds-bubble",
+          "url": "https://animate-ui.com/r/backgrounds-bubble.json",
+          "http_status": 200
+        },
+        {
+          "item": "icons-hugeicons-wifi-zero",
+          "url": "https://animate-ui.com/r/icons-hugeicons-wifi-zero.json",
+          "http_status": 200
+        },
+        {
+          "item": "icons-lucide-zoom-out",
+          "url": "https://animate-ui.com/r/icons-lucide-zoom-out.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@basecn",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 56,
+      "evidence": [
+        {
+          "item": "alert",
+          "url": "https://basecn.dev/r/alert.json",
+          "http_status": 200
+        },
+        {
+          "item": "input-group",
+          "url": "https://basecn.dev/r/input-group.json",
+          "http_status": 200
+        },
+        {
+          "item": "tooltip",
+          "url": "https://basecn.dev/r/tooltip.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@bundui",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 217,
+      "evidence": [
+        {
+          "item": "accordion-default",
+          "url": "https://bundui.io/r/accordion-default.json",
+          "http_status": 200
+        },
+        {
+          "item": "stars",
+          "url": "https://bundui.io/r/stars.json",
+          "http_status": 200
+        },
+        {
+          "item": "team-sections-02",
+          "url": "https://bundui.io/r/team-sections-02.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@coss",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 607,
+      "evidence": [
+        {
+          "item": "p-field-16",
+          "url": "https://coss.com/ui/r/p-field-16.json",
+          "http_status": 200
+        },
+        {
+          "item": "ui",
+          "url": "https://coss.com/ui/r/ui.json",
+          "http_status": 200
+        },
+        {
+          "item": "use-copy-to-clipboard",
+          "url": "https://coss.com/ui/r/use-copy-to-clipboard.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@hextaui",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 760,
+      "evidence": [
+        {
+          "item": "field-demo",
+          "url": "https://hextaui.com/r/field-demo.json",
+          "http_status": 200
+        },
+        {
+          "item": "theme",
+          "url": "https://hextaui.com/r/theme.json",
+          "http_status": 200
+        },
+        {
+          "item": "video-player-seek-offsets",
+          "url": "https://hextaui.com/r/video-player-seek-offsets.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@keyline",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 13536,
+      "evidence": [
+        {
+          "item": "a-arrow-down",
+          "url": "https://keylineicons.com/r/a-arrow-down.json",
+          "http_status": 200
+        },
+        {
+          "item": "hat-glasses",
+          "url": "https://keylineicons.com/r/hat-glasses.json",
+          "http_status": 200
+        },
+        {
+          "item": "sharp/fill/zap-sparkles",
+          "url": "https://keylineicons.com/r/sharp/fill/zap-sparkles.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@kibo-ui",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 41,
+      "evidence": [
+        {
+          "item": "announcement",
+          "url": "https://www.kibo-ui.com/r/announcement.json",
+          "http_status": 200
+        },
+        {
+          "item": "kanban",
+          "url": "https://www.kibo-ui.com/r/kanban.json",
+          "http_status": 200
+        },
+        {
+          "item": "video-player",
+          "url": "https://www.kibo-ui.com/r/video-player.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@logoforge",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 1019,
+      "evidence": [
+        {
+          "item": "1password",
+          "url": "https://logoforge.terravidhal.me/r/1password.json",
+          "http_status": 200
+        },
+        {
+          "item": "livekit",
+          "url": "https://logoforge.terravidhal.me/r/livekit.json",
+          "http_status": 200
+        },
+        {
+          "item": "zulip",
+          "url": "https://logoforge.terravidhal.me/r/zulip.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@magicui",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 260,
+      "evidence": [
+        {
+          "item": "index",
+          "url": "https://magicui.design/r/index",
+          "http_status": 200
+        },
+        {
+          "item": "tweet-card-images",
+          "url": "https://magicui.design/r/tweet-card-images",
+          "http_status": 200
+        },
+        {
+          "item": "utils",
+          "url": "https://magicui.design/r/utils",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@react-bits",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 1274,
+      "evidence": [
+        {
+          "item": "AnimatedContent-JS-CSS",
+          "url": "https://reactbits.dev/r/AnimatedContent-JS-CSS.json",
+          "http_status": 200
+        },
+        {
+          "item": "LineWaves-JS-TW",
+          "url": "https://reactbits.dev/r/LineWaves-JS-TW.json",
+          "http_status": 200
+        },
+        {
+          "item": "SoundCountdown-TS",
+          "url": "https://reactbits.dev/r/SoundCountdown-TS.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@shadcn",
+      "status": "free",
+      "scope": "items",
+      "method": "http-probe",
+      "checked_at": "2026-11-06",
+      "item_count": null,
+      "evidence": [
+        {
+          "item": "button",
+          "url": "https://ui.shadcn.com/r/styles/new-york/button.json",
+          "http_status": 200
+        },
+        {
+          "item": "button",
+          "url": "https://ui.shadcn.com/r/styles/base-vega/button.json",
+          "http_status": 200
+        }
+      ],
+      "note": "official shadcn registry, MIT; served per style, not listed in the community index"
+    },
+    {
+      "registry": "@shadcnblocks",
+      "status": "paid",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 4921,
+      "evidence": [
+        {
+          "item": "about1",
+          "url": "https://shadcnblocks.com/r/about1.json",
+          "http_status": 401
+        },
+        {
+          "item": "stats1",
+          "url": "https://shadcnblocks.com/r/stats1.json",
+          "http_status": 401
+        },
+        {
+          "item": "video-player-video-player-volume-1",
+          "url": "https://shadcnblocks.com/r/video-player-video-player-volume-1.json",
+          "http_status": 401
+        }
+      ],
+      "note": "all sampled items answer HTTP 401"
+    },
+    {
+      "registry": "@tailark",
+      "status": "freemium",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 476,
+      "evidence": [
+        {
+          "item": "code-demo-3",
+          "url": "https://tailark.com/r/code-demo-3.json",
+          "http_status": 401
+        },
+        {
+          "item": "core-utils",
+          "url": "https://tailark.com/r/core-utils.json",
+          "http_status": 200
+        },
+        {
+          "item": "testimonials-2",
+          "url": "https://tailark.com/r/testimonials-2.json",
+          "http_status": 401
+        }
+      ],
+      "note": "index public; hero-section-1, code-demo-3 and testimonials-2 answer HTTP 401 (paywall), core-utils is public"
+    },
+    {
+      "registry": "@uiable",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 965,
+      "evidence": [
+        {
+          "item": "accordion-active-bg",
+          "url": "https://uiable.com/r/accordion-active-bg.json",
+          "http_status": 200
+        },
+        {
+          "item": "marker-status",
+          "url": "https://uiable.com/r/marker-status.json",
+          "http_status": 200
+        },
+        {
+          "item": "uiable-preset-18",
+          "url": "https://uiable.com/r/uiable-preset-18.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    },
+    {
+      "registry": "@watermelon",
+      "status": "free",
+      "scope": "registry",
+      "method": "http_probe",
+      "checked_at": "2026-11-06",
+      "item_count": 1178,
+      "evidence": [
+        {
+          "item": "bento-02",
+          "url": "https://registry.watermelon.sh/r/bento-02.json",
+          "http_status": 200
+        },
+        {
+          "item": "inline-disclosure-menu",
+          "url": "https://registry.watermelon.sh/r/inline-disclosure-menu.json",
+          "http_status": 200
+        },
+        {
+          "item": "pagination-13",
+          "url": "https://registry.watermelon.sh/r/pagination-13.json",
+          "http_status": 200
+        }
+      ],
+      "note": "all sampled items answer HTTP 200"
+    }
+  ]
+}
