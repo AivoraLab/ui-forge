@@ -45,6 +45,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         name = self.path.split("?", 1)[0].rsplit("/", 1)[-1]
         Handler.hits[name] = Handler.hits.get(name, 0) + 1
+        if name == "slow-dep-item.json":
+            time.sleep(3)
+            try:
+                with open(os.path.join(REGISTRY, "plain-item.json"), "rb") as handle:
+                    self._send(200, body=handle.read())
+            except (BrokenPipeError, ConnectionResetError):
+                pass  # the client already gave up; that is the point
+            return
         if name == "slow-item.json":
             time.sleep(3)
             try:
@@ -70,7 +78,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 class UiForgeSmoke(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.server = http.server.HTTPServer(("127.0.0.1", 0), Handler)
+        cls.server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         cls.port = cls.server.server_address[1]
         cls.thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
         cls.thread.start()
@@ -283,7 +291,24 @@ class UiForgeSmoke(unittest.TestCase):
         self.assertEqual(proc.returncode, 1, proc.stdout)
         self.assertLess(elapsed, 2.8)
         error = json.loads(proc.stdout)["error"]
-        self.assertIn(error["code"], ("deadline_exceeded", "timeout"))
+        # The typed contract, not just any failure: the deadline was the
+        # binding constraint on the fetch timeout, so the error must be
+        # deadline_exceeded naming the stage — never a bare "timeout".
+        self.assertEqual(error["code"], "deadline_exceeded")
+        self.assertEqual(error["stage"], "fetch")
+
+    def test_inspect_partial_report_when_regdep_blows_the_deadline(self):
+        # The item itself answers instantly; its only registryDependency
+        # answers after 3 s against a 2 s deadline. The promised behaviour
+        # is a partial report naming the stage, not a clean pass.
+        doc = self.run_json("inspect", "@fixture/needs-slowdep", "--json",
+                            "--project", self.project, "--no-cli",
+                            "--timeout", "30", "--deadline", "2")
+        self.assertTrue(doc["partial"])
+        self.assertEqual(doc["timing"]["deadline_stage"], "registry_dependencies")
+        dep = doc["registry_dependencies_inspected"][0]
+        self.assertEqual(dep["error"]["code"], "deadline_exceeded")
+        self.assertTrue(any("deadline" in note for note in doc["gate"]["unknowns"]))
 
     def test_inspect_fetch_cache_avoids_second_network_hit(self):
         url = self.base + "/r/plain-item.json"

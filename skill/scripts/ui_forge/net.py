@@ -8,6 +8,7 @@ import base64
 import hashlib
 import json
 import os
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -57,14 +58,26 @@ def _cache_read(cache_dir, url, ttl):
 def _cache_write(cache_dir, url, body):
     if not cache_dir:
         return
+    tmp_path = None
     try:
         os.makedirs(cache_dir, exist_ok=True)
         entry = {"url": url, "fetched_at": time.time(),
                  "body_b64": base64.b64encode(body).decode("ascii")}
-        with open(_cache_path(cache_dir, url), "w", encoding="utf-8") as handle:
+        final_path = _cache_path(cache_dir, url)
+        # Atomic publish: parallel workers may write the same URL at once.
+        tmp_path = "%s.%d.%d.tmp" % (final_path, os.getpid(), threading.get_ident())
+        with open(tmp_path, "w", encoding="utf-8") as handle:
             json.dump(entry, handle)
+        os.replace(tmp_path, final_path)
+        tmp_path = None
     except OSError:
         pass  # a read-only data dir must never fail the fetch itself
+    finally:
+        if tmp_path:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
 
 
 def fetch_bytes(url, timeout=30, headers=None, cache_dir=None, cache_ttl=FETCH_CACHE_TTL):

@@ -71,7 +71,22 @@ class RunContext:
         remaining = self.remaining()
         if remaining is None:
             return cap
-        return max(1, int(min(cap, remaining)))
+        return max(0.2, round(min(cap, remaining), 3))
+
+    def deadline_bound(self, cap):
+        """True when the deadline, not the stage cap, sizes the next timeout.
+
+        Evaluate BEFORE the call: a timeout error from a deadline-bound call
+        means the deadline fired inside the call, not merely a slow peer
+        hitting its own cap.
+        """
+        remaining = self.remaining()
+        return remaining is not None and remaining <= cap
+
+    def blown(self, slack=0.5):
+        """True when the deadline is exhausted (small clock slack allowed)."""
+        remaining = self.remaining()
+        return remaining is not None and remaining <= slack
 
     def log(self, stage, message):
         if self.progress_enabled:

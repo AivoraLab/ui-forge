@@ -40,6 +40,16 @@ def _emit(payload, as_json, renderer=None):
         sys.stdout.write("\n")
 
 
+def _deadline_arg(value):
+    try:
+        ivalue = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("--deadline must be an integer number of seconds")
+    if ivalue < 0:
+        raise argparse.ArgumentTypeError("--deadline must be >= 0 (0 disables the deadline)")
+    return ivalue
+
+
 def _print_error(exc, as_json, schema, code="runtime_error", status=1):
     if as_json:
         json.dump({"schema": schema, "ok": False, "error": exc}, sys.stdout, indent=2, ensure_ascii=False)
@@ -184,7 +194,7 @@ def build_parser():
     inspect_parser.add_argument("--max-regdeps", type=int, default=4)
     inspect_parser.add_argument("--refresh-index", action="store_true")
     inspect_parser.add_argument("--timeout", type=int, default=30)
-    inspect_parser.add_argument("--deadline", type=int, default=120,
+    inspect_parser.add_argument("--deadline", type=_deadline_arg, default=120,
                                 help="hard wall-clock budget in seconds for the whole inspect "
                                      "(default 120; 0 = no deadline). Expiry is a typed "
                                      "deadline_exceeded error or a partial report, never a silent hang.")

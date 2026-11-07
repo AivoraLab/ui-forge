@@ -275,18 +275,32 @@ def inspect(target, data_dir, project_dir=None, use_cli=True, recurse=True,
         ctx.log("fingerprint", "base=%s tailwind=%s%s" % (
             project_fp.get("base"), project_fp.get("tailwind_version"),
             " (cache)" if project_fp.get("from_cache") else ""))
+    # Warm the registry index inside the deadline: Resolver loads it lazily
+    # with its own 30 s default, which would otherwise sit outside the
+    # budget on a cold machine. Afterwards the Resolver reads the warm cache.
+    ctx.log("index", "registry index (cache-first; network only when stale)")
+    try:
+        index_mod.load(data_dir, refresh=refresh_index, timeout=ctx.budget("index", 30))
+    except net.FetchError as exc:
+        if exc.code == "timeout" and ctx.blown():
+            raise runctx_mod.DeadlineExceeded("index", ctx.elapsed(), ctx.deadline)
+        raise
     resolver = Resolver(data_dir, project_fp)
-    if refresh_index:
-        index_mod.load(data_dir, refresh=True)
     license_info = licenses.lookup(resolver.license_db(), _namespace_for_target(target))
     urls, source = resolver.candidates(target)
 
     ctx.check("fetch")
     ctx.log("fetch", "%s -> %s" % (target, urls[0] if urls else "?"))
+    fetch_bound = ctx.deadline_bound(timeout)
     try:
         item, used_url, failures = net.fetch_json_candidates(
             urls, timeout=ctx.budget("fetch", timeout), cache_dir=cache_dir)
     except net.FetchError as exc:
+        if exc.code == "timeout" and fetch_bound and ctx.blown():
+            # The deadline fired inside the fetch: the socket timeout was
+            # sized by the remaining budget, so this is a deadline expiry,
+            # not an ordinary slow-server timeout.
+            raise runctx_mod.DeadlineExceeded("fetch", ctx.elapsed(), ctx.deadline)
         if exc.code in ("http_401", "http_402", "http_403"):
             license_info = dict(license_info)
             license_info["status"] = "paid" if license_info.get("status") == "unknown" else license_info["status"]
@@ -309,6 +323,7 @@ def inspect(target, data_dir, project_dir=None, use_cli=True, recurse=True,
             len(labels), max_regdeps, len(registry_deps)))
 
         def fetch_one(label):
+            bound = ctx.deadline_bound(timeout)
             try:
                 budget = ctx.budget("registry_dependencies", timeout)
             except runctx_mod.DeadlineExceeded:
@@ -316,7 +331,14 @@ def inspect(target, data_dir, project_dir=None, use_cli=True, recurse=True,
                         "error": {"code": "deadline_exceeded",
                                   "message": "run deadline expired before this fetch"},
                         "deps": [], "base_signals": {}}
-            return _fetch_registry_dep(resolver, namespace, label, budget, cache_dir=cache_dir)
+            record = _fetch_registry_dep(resolver, namespace, label, budget, cache_dir=cache_dir)
+            if (not record.get("ok") and bound and ctx.blown()
+                    and (record.get("error") or {}).get("code") == "timeout"):
+                # Deadline fired inside this fetch: relabel so the report
+                # becomes partial with the stage named, per the contract.
+                record["error"] = {"code": "deadline_exceeded",
+                                   "message": "run deadline expired during this fetch"}
+            return record
 
         if len(labels) == 1:
             recursive = [fetch_one(labels[0])]
