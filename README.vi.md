@@ -10,7 +10,7 @@
 [![smoke](https://github.com/AivoraLab/ui-forge/actions/workflows/smoke.yml/badge.svg)](https://github.com/AivoraLab/ui-forge/actions/workflows/smoke.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![python 3.12+](https://img.shields.io/badge/python-3.12%2B-3776AB.svg)](https://www.python.org/)
-[![status: v2.1.0](https://img.shields.io/badge/status-v2.1.0-success.svg)](docs/roadmap.md)
+[![status: v2.1.1](https://img.shields.io/badge/status-v2.1.1-success.svg)](docs/roadmap.md)
 
 Một agent skill trả lời một câu trước khi agent cài bất cứ thứ gì:
 

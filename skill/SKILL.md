@@ -108,6 +108,13 @@ and evidence for every point. Rules:
   `--no-cli` only when Node/the shadcn CLI is unavailable.
 - GitHub registries (`owner/repo/item`) cannot be resolved from the community
   index; pass the item JSON URL instead.
+- The gate runs against a **120 s wall-clock deadline** (`--deadline`,
+  0 = none) shared by every stage, prints one progress line per stage to
+  stderr (`--no-progress` silences them; stdout stays pure JSON), and
+  caches fetched item JSON for 24 h in the data directory, so repeat
+  inspections are near-instant. A `deadline_exceeded` error or a report
+  with `partial: true` names the stage that ran out of time — report it,
+  never sit waiting on a silent inspect.
 
 ### 6. Fitting Room — the user decides
 
