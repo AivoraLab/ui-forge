@@ -16,6 +16,20 @@
 - [x] P5: README (two install commands + one prompt), CONTRIBUTING license path,
       docs on disk
 
+## v2.1.1 — Gate latency (shipped as 2.1.1)
+
+- [x] `inspect` runs against one shared wall-clock deadline (`--deadline`,
+      default 120 s): the fingerprint CLI call, the item fetch and the
+      registryDependency fetches no longer stack private timeouts
+      (previously up to 180 s + a dozen × 30 s, in silence)
+- [x] Per-stage progress lines on stderr; expiry is a typed
+      `deadline_exceeded` error or a `partial: true` report naming the stage
+- [x] Fetched item JSON is cached for 24 h in the data directory
+      (`fetch-cache/`); repeat inspections are near-instant
+- [x] registryDependencies are fetched in parallel (order preserved)
+- [x] Project fingerprint cache TTL raised 10 min → 24 h (it is keyed by a
+      signature of the source files, so edits still invalidate it at once)
+
 ## v2.1 — Coverage (shipped as 2.1.0)
 
 - [x] Extend `licenses.json`: 486/539 registries probed (462 free, 16 freemium,

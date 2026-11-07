@@ -27,6 +27,8 @@ PAYMENT_REQUIRED = "payment-required-item.json"
 
 
 class Handler(http.server.BaseHTTPRequestHandler):
+    hits = {}
+
     def log_message(self, *args):  # keep CI output clean
         return
 
@@ -42,6 +44,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         name = self.path.split("?", 1)[0].rsplit("/", 1)[-1]
+        Handler.hits[name] = Handler.hits.get(name, 0) + 1
+        if name == "slow-item.json":
+            time.sleep(3)
+            try:
+                with open(os.path.join(REGISTRY, "radix-item.json"), "rb") as handle:
+                    self._send(200, body=handle.read())
+            except (BrokenPipeError, ConnectionResetError):
+                pass  # the client already gave up; that is the point
+            return
         if name == PAYWALLED:
             self._send(401)
             return
@@ -146,7 +157,7 @@ class UiForgeSmoke(unittest.TestCase):
     def test_version(self):
         proc = self.run_cli("--version")
         self.assertEqual(proc.returncode, 0)
-        self.assertIn("ui-forge 2.1.0", proc.stdout)
+        self.assertIn("ui-forge 2.1.1", proc.stdout)
 
     def test_discover_is_free_first_and_flags_unknown(self):
         doc = self.run_json("discover", "--json", "--limit", "10")
@@ -260,6 +271,27 @@ class UiForgeSmoke(unittest.TestCase):
         kept, warnings = search_mod.relevance_guard(items, "hero")
         self.assertEqual({row["name"] for row in kept}, {"hero-video", "hero-grid"})
         self.assertTrue(any("@noisy" in warning for warning in warnings))
+
+    def test_inspect_deadline_bounds_a_slow_fetch(self):
+        # The registry answers after 3s; a 1s deadline must fail loudly in
+        # roughly the deadline's time — never after the full fetch timeout.
+        started = time.time()
+        proc = self.run_cli("inspect", self.base + "/r/slow-item.json", "--json",
+                            "--project", self.project, "--no-cli",
+                            "--timeout", "30", "--deadline", "1")
+        elapsed = time.time() - started
+        self.assertEqual(proc.returncode, 1, proc.stdout)
+        self.assertLess(elapsed, 2.8)
+        error = json.loads(proc.stdout)["error"]
+        self.assertIn(error["code"], ("deadline_exceeded", "timeout"))
+
+    def test_inspect_fetch_cache_avoids_second_network_hit(self):
+        url = self.base + "/r/plain-item.json"
+        self.run_json("inspect", url, "--json", "--project", self.project, "--no-cli")
+        hits_after_first = Handler.hits.get("plain-item.json", 0)
+        self.assertGreaterEqual(hits_after_first, 1)
+        self.run_json("inspect", url, "--json", "--project", self.project, "--no-cli")
+        self.assertEqual(Handler.hits.get("plain-item.json", 0), hits_after_first)
 
 
 if __name__ == "__main__":

@@ -53,8 +53,8 @@ def check_commands():
         [sys.executable, SCRIPT, "--version"],
         capture_output=True, text=True, encoding="utf-8", timeout=120,
     )
-    if proc.returncode != 0 or "ui-forge 2.1.0" not in proc.stdout:
-        return fail("--version must print 'ui-forge 2.1.0' (got %r)" % proc.stdout.strip())
+    if proc.returncode != 0 or "ui-forge 2.1.1" not in proc.stdout:
+        return fail("--version must print 'ui-forge 2.1.1' (got %r)" % proc.stdout.strip())
     return 0
 
 

@@ -1,6 +1,7 @@
 # runtime caches (data/licenses.json is source, not cache)
 skill/data/registries-cache.json
 skill/data/fingerprint-cache.json
+skill/data/fetch-cache/
 skill/data/verdicts/
 skill/data/previews/
 skill/data/*.tmp

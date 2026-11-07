@@ -11,6 +11,7 @@ import sys
 
 from . import __version__, discover as discover_mod, evaluate as evaluate_mod
 from . import index as index_mod, inspect as inspect_mod, licenses, net, render as render_mod, search as search_mod
+from . import runctx as runctx_mod
 
 
 def _default_data_dir():
@@ -183,6 +184,12 @@ def build_parser():
     inspect_parser.add_argument("--max-regdeps", type=int, default=4)
     inspect_parser.add_argument("--refresh-index", action="store_true")
     inspect_parser.add_argument("--timeout", type=int, default=30)
+    inspect_parser.add_argument("--deadline", type=int, default=120,
+                                help="hard wall-clock budget in seconds for the whole inspect "
+                                     "(default 120; 0 = no deadline). Expiry is a typed "
+                                     "deadline_exceeded error or a partial report, never a silent hang.")
+    inspect_parser.add_argument("--no-progress", dest="progress", action="store_false", default=True,
+                                help="silence the per-stage progress lines on stderr")
 
     evaluate_parser = subparsers.add_parser("evaluate", parents=[common],
                                             help="fit ranking from agent-scored candidates")
@@ -253,12 +260,19 @@ def main(argv=None):
 
     if args.command == "inspect":
         project = args.project or _default_project()
+        ctx = runctx_mod.RunContext(
+            deadline=args.deadline or None,
+            progress=args.progress and runctx_mod.progress_default(),
+        )
         try:
             payload = inspect_mod.inspect(
                 args.target, data_dir, project_dir=project, use_cli=args.use_cli,
                 recurse=args.recurse, max_regdeps=args.max_regdeps,
                 timeout=args.timeout, refresh_index=args.refresh_index,
+                ctx=ctx, cache_dir=os.path.join(data_dir, "fetch-cache"),
             )
+        except runctx_mod.DeadlineExceeded as exc:
+            return _print_error(exc.as_dict(), as_json, "ui-forge/inspect/v1")
         except inspect_mod.UsageError as exc:
             return _print_error(exc.as_dict(), as_json, "ui-forge/inspect/v1", status=2)
         except net.FetchError as exc:

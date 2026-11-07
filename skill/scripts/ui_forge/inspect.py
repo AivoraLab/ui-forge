@@ -10,10 +10,12 @@ import hashlib
 import json
 import os
 import re
+from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlsplit
 
 from . import index as index_mod
 from . import licenses, net, project as project_mod
+from . import runctx as runctx_mod
 
 IMPORT_RE = re.compile(
     r"""(?:from\s+|import\s*\(\s*|import\s+|require\s*\(\s*)['"]([^'"]+)['"]"""
@@ -181,7 +183,7 @@ def _css_var_names(css_vars):
     return names
 
 
-def _fetch_registry_dep(resolver, namespace, label, timeout):
+def _fetch_registry_dep(resolver, namespace, label, timeout, cache_dir=None):
     """Resolve one registryDependency, one level deep. Returns a record."""
     record = {"target": label, "url": None, "ok": False, "error": None, "deps": [], "base_signals": {}}
     try:
@@ -195,7 +197,7 @@ def _fetch_registry_dep(resolver, namespace, label, timeout):
         record["error"] = {"code": exc.code, "message": exc.message}
         return record
     try:
-        item, used, _failures = net.fetch_json_candidates(urls, timeout=timeout)
+        item, used, _failures = net.fetch_json_candidates(urls, timeout=timeout, cache_dir=cache_dir)
     except net.FetchError as exc:
         record["error"] = {"code": exc.code, "message": exc.message}
         return record
@@ -246,19 +248,44 @@ def _namespace_for_target(target):
 
 
 def inspect(target, data_dir, project_dir=None, use_cli=True, recurse=True,
-            max_regdeps=4, timeout=30, refresh_index=False):
-    """Run the gate for one target. Returns the inspect report dict."""
+            max_regdeps=4, timeout=30, refresh_index=False, ctx=None, cache_dir=None):
+    """Run the gate for one target. Returns the inspect report dict.
+
+    ``ctx`` (a runctx.RunContext) bounds the whole run: the fingerprint's
+    CLI call, the item fetch and every registryDependency fetch share one
+    deadline instead of stacking private timeouts, and progress is logged
+    to stderr per stage. If the deadline expires before the item itself is
+    fetched, runctx.DeadlineExceeded propagates; after that point the run
+    finishes as a partial report (``partial: true``) with the unfinished
+    stages named in the gate's unknowns.
+    """
+    ctx = ctx or runctx_mod.RunContext()
+    partial = {"hit": False, "stage": None}
+
+    def note_deadline(stage):
+        partial["hit"] = True
+        partial["stage"] = stage
+
     project_fp = None
     if project_dir:
-        project_fp = project_mod.fingerprint(project_dir, use_cli=use_cli, data_dir=data_dir)
+        ctx.log("fingerprint", "reading project (shadcn info, cached 24h by file signature)")
+        cli_timeout = ctx.budget("fingerprint", 60) if use_cli else None
+        project_fp = project_mod.fingerprint(
+            project_dir, use_cli=use_cli, data_dir=data_dir, cli_timeout=cli_timeout)
+        ctx.log("fingerprint", "base=%s tailwind=%s%s" % (
+            project_fp.get("base"), project_fp.get("tailwind_version"),
+            " (cache)" if project_fp.get("from_cache") else ""))
     resolver = Resolver(data_dir, project_fp)
     if refresh_index:
         index_mod.load(data_dir, refresh=True)
     license_info = licenses.lookup(resolver.license_db(), _namespace_for_target(target))
     urls, source = resolver.candidates(target)
 
+    ctx.check("fetch")
+    ctx.log("fetch", "%s -> %s" % (target, urls[0] if urls else "?"))
     try:
-        item, used_url, failures = net.fetch_json_candidates(urls, timeout=timeout)
+        item, used_url, failures = net.fetch_json_candidates(
+            urls, timeout=ctx.budget("fetch", timeout), cache_dir=cache_dir)
     except net.FetchError as exc:
         if exc.code in ("http_401", "http_402", "http_403"):
             license_info = dict(license_info)
@@ -277,11 +304,33 @@ def inspect(target, data_dir, project_dir=None, use_cli=True, recurse=True,
     recursive = []
     if recurse and registry_deps:
         namespace = source if source != "url" else ""
-        for label in registry_deps[:max_regdeps]:
-            record = _fetch_registry_dep(resolver, namespace, label, timeout)
-            recursive.append(record)
+        labels = list(registry_deps[:max_regdeps])
+        ctx.log("registry_dependencies", "%d to inspect (parallel, cap %d of %d)" % (
+            len(labels), max_regdeps, len(registry_deps)))
+
+        def fetch_one(label):
+            try:
+                budget = ctx.budget("registry_dependencies", timeout)
+            except runctx_mod.DeadlineExceeded:
+                return {"target": label, "url": None, "ok": False,
+                        "error": {"code": "deadline_exceeded",
+                                  "message": "run deadline expired before this fetch"},
+                        "deps": [], "base_signals": {}}
+            return _fetch_registry_dep(resolver, namespace, label, budget, cache_dir=cache_dir)
+
+        if len(labels) == 1:
+            recursive = [fetch_one(labels[0])]
+        else:
+            with ThreadPoolExecutor(max_workers=min(4, len(labels))) as pool:
+                recursive = list(pool.map(fetch_one, labels))
+        for record in recursive:
             if record.get("ok"):
                 item_bases |= set(record.get("bases") or [])
+            elif (record.get("error") or {}).get("code") == "deadline_exceeded":
+                note_deadline("registry_dependencies")
+        ctx.log("registry_dependencies", "done: %d ok, %d failed" % (
+            sum(1 for r in recursive if r.get("ok")),
+            sum(1 for r in recursive if not r.get("ok"))))
 
     reasons = []
     unknowns = []
@@ -413,6 +462,11 @@ def inspect(target, data_dir, project_dir=None, use_cli=True, recurse=True,
     failed_regdeps = [r for r in recursive if not r.get("ok")]
     if failed_regdeps:
         unknowns.append("could not inspect registryDependencies: %s" % ", ".join(r["target"] for r in failed_regdeps))
+    if partial["hit"]:
+        unknowns.append(
+            "run deadline of %ss was reached during %s; this report is partial — "
+            "unfinished stages are named above, rerun with a larger --deadline to complete them"
+            % (ctx.deadline, partial["stage"]))
 
     # --- license ------------------------------------------------------------
     status = license_info.get("status", "unknown")
@@ -448,12 +502,19 @@ def inspect(target, data_dir, project_dir=None, use_cli=True, recurse=True,
     else:
         verdict = "pass"
 
+    ctx.log("gate", "compat_risk computed from %d reason(s)" % len(reasons))
     canonical = json.dumps(item, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     report = {
         "schema": "ui-forge/inspect/v1",
         "target": target,
         "url": used_url,
         "resolved_from": source,
+        "partial": bool(partial["hit"]),
+        "timing": {
+            "elapsed_seconds": round(ctx.elapsed(), 2),
+            "deadline_seconds": ctx.deadline,
+            "deadline_stage": partial["stage"],
+        },
         "item": {
             "name": item.get("name"),
             "title": item.get("title"),

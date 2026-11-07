@@ -16,7 +16,10 @@ import time
 from . import shadcn
 
 CACHE_NAME = "fingerprint-cache.json"
-CACHE_TTL = 600
+# The cache entry is keyed by a signature of the exact files it was derived
+# from (components.json, package.json, tsconfig, the Tailwind CSS entry), so
+# a long TTL is safe: any edit to those files invalidates it immediately.
+CACHE_TTL = 86400
 STYLE_BASE = re.compile(r"^(radix|base|aria)-")
 CSS_TOKEN = re.compile(r"(--[a-zA-Z0-9_-]+)\s*:\s*([^;]+);")
 TAILWIND_V4 = re.compile(r"@import\s+[\"']tailwindcss[\"']|@theme\b")
@@ -149,7 +152,7 @@ def _cache_save(data_dir, root, signature, fingerprint):
         pass
 
 
-def fingerprint(root, use_cli=True, data_dir=None, refresh=False):
+def fingerprint(root, use_cli=True, data_dir=None, refresh=False, cli_timeout=None):
     """Return a stable fingerprint dict for the project at ``root``."""
     root = os.path.abspath(root)
     components = _read_json(os.path.join(root, "components.json"))
@@ -173,7 +176,7 @@ def fingerprint(root, use_cli=True, data_dir=None, refresh=False):
     cli_result = {"attempted": cli_attempted, "ok": False, "command": None, "error": None}
     cli_info = {}
     if use_cli:
-        result = shadcn.info(root)
+        result = shadcn.info(root, timeout=cli_timeout or shadcn.DEFAULT_TIMEOUT)
         cli_result["command"] = result.get("command")
         if result.get("ok") and isinstance(result.get("data"), dict):
             cli_info = result["data"]
